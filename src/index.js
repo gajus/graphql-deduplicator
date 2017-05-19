@@ -1,3 +1,3 @@
 // @flow
 
-export {default as createResponseNormalizer} from './createResponseNormalizer';
+export {default as createResponseDeduplicator} from './createResponseDeduplicator';

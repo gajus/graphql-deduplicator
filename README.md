@@ -171,7 +171,7 @@ import {
   graphqlExpress
 } from 'graphql-server-express';
 import {
-  createResponseNormalizer
+  createResponseDeduplicator
 } from 'graphql-deduplicator';
 
 const SERVICE_PORT = 3000;
@@ -180,7 +180,7 @@ const app = express();
 
 app.use('/graphql', graphqlExpress(() => {
   return {
-    formatResponse: createResponseNormalizer()
+    formatResponse: createResponseDeduplicator()
   };
 }));
 
