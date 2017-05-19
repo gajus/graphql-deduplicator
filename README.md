@@ -180,7 +180,13 @@ const app = express();
 
 app.use('/graphql', graphqlExpress(() => {
   return {
-    formatResponse: createResponseDeduplicator()
+    formatResponse: (response) => {
+      if (response.data && !response.data.__schema) {
+        return createResponseDeduplicator()(response);
+      }
+
+      return response;
+    }
   };
 }));
 
