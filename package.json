@@ -1,0 +1,66 @@
+{
+  "author": {
+    "email": "gajus@gajus.com",
+    "name": "Gajus Kuizinas",
+    "url": "http://gajus.com"
+  },
+  "ava": {
+    "babel": {
+      "babelrc": true
+    },
+    "require": "babel-register"
+  },
+  "description": "A GraphQL response normalizer.",
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "babel-cli": "^6.24.1",
+    "babel-plugin-istanbul": "^4.1.1",
+    "babel-plugin-tailcall-optimization": "^1.0.11",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-register": "^6.24.1",
+    "coveralls": "^2.13.0",
+    "eslint": "^3.19.0",
+    "eslint-config-canonical": "^8.1.1",
+    "flow-bin": "^0.44.0",
+    "flow-copy-source": "^1.1.0",
+    "husky": "^0.13.3",
+    "nyc": "^10.2.0",
+    "semantic-release": "^6.3.6"
+  },
+  "engines": {
+    "node": ">6.0.0"
+  },
+  "keywords": [
+    "graphql",
+    "apollo"
+  ],
+  "license": "BSD-3-Clause",
+  "main": "./dist/index.js",
+  "name": "graphql-normalizer",
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "instrument": false,
+    "reporter": [
+      "text-lcov"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajus/graphql-normalizer"
+  },
+  "scripts": {
+    "build": "rm -fr ./dist && NODE_ENV=production babel ./src --out-dir ./dist --copy-files --source-maps && flow-copy-source src dist",
+    "lint": "eslint ./src ./test && flow",
+    "precommit": "npm run lint && npm run test && npm run build",
+    "test": "NODE_ENV=test nyc --reporter=text ava --verbose --serial"
+  },
+  "version": "1.0.0"
+}
