@@ -10,7 +10,7 @@
     },
     "require": "babel-register"
   },
-  "description": "A GraphQL response normalizer.",
+  "description": "A GraphQL response deduplicator. Removes duplicate entities from the GraphQL response.",
   "devDependencies": {
     "ava": "^0.19.1",
     "babel-cli": "^6.24.1",
@@ -34,11 +34,13 @@
   },
   "keywords": [
     "graphql",
-    "apollo"
+    "apollo",
+    "deduplicator",
+    "normalizer"
   ],
   "license": "BSD-3-Clause",
   "main": "./dist/index.js",
-  "name": "graphql-normalizer",
+  "name": "graphql-deduplicator",
   "nyc": {
     "include": [
       "src/**/*.js"
@@ -54,7 +56,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gajus/graphql-normalizer"
+    "url": "https://github.com/gajus/graphql-deduplicator"
   },
   "scripts": {
     "build": "rm -fr ./dist && NODE_ENV=production babel ./src --out-dir ./dist --copy-files --source-maps && flow-copy-source src dist",
