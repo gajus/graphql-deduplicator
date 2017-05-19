@@ -5,7 +5,7 @@
 import invariant from 'assert';
 import test from 'ava';
 import {
-  createResponseNormalizer
+  createResponseDeduplicator
 } from '../src';
 
 test('does not modify object without __typename and ID', (t) => {
@@ -13,7 +13,7 @@ test('does not modify object without __typename and ID', (t) => {
     foo: 'bar'
   };
 
-  const normalizedResponse = createResponseNormalizer()(response);
+  const normalizedResponse = createResponseDeduplicator()(response);
 
   t.deepEqual(normalizedResponse, {
     foo: 'bar'
@@ -36,7 +36,7 @@ test('does not modify first instance of an object; removes known entity properti
     ]
   };
 
-  const normalizedResponse = createResponseNormalizer()(response);
+  const normalizedResponse = createResponseDeduplicator()(response);
 
   invariant(normalizedResponse.data && normalizedResponse.data.length === 2);
 
