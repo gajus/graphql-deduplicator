@@ -2,7 +2,6 @@
 
 /* eslint-disable id-match */
 
-import invariant from 'assert';
 import test from 'ava';
 import deflate from '../src/deflate';
 
@@ -36,16 +35,85 @@ test('does not modify first instance of an object; removes known entity properti
 
   const deflatedResponse = deflate(response);
 
-  invariant(deflatedResponse.data && deflatedResponse.data.length === 2);
-
-  t.deepEqual(deflatedResponse.data[0], {
-    __typename: 'foo',
-    id: 1,
-    name: 'foo'
+  t.deepEqual(deflatedResponse, {
+    data: [
+      {
+        __typename: 'foo',
+        id: 1,
+        name: 'foo'
+      },
+      {
+        __typename: 'foo',
+        id: 1
+      }
+    ]
   });
+});
 
-  t.deepEqual(deflatedResponse.data[1], {
-    __typename: 'foo',
-    id: 1
+test('does not modify first instance of an object; removes known entity properties (nested; different path)', (t) => {
+  const response = {
+    data: [
+      {
+        __typename: 'foo',
+        bar1: {
+          __typename: 'bar',
+          id: 1,
+          name: 'red'
+        },
+        bar2: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar'
+        },
+        id: 1
+      },
+      {
+        __typename: 'foo',
+        bar1: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar'
+        },
+        bar2: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar'
+        },
+        id: 2
+      }
+    ]
+  };
+
+  const deflatedResponse = deflate(response);
+
+  t.deepEqual(deflatedResponse, {
+    data: [
+      {
+        __typename: 'foo',
+        bar1: {
+          __typename: 'bar',
+          id: 1,
+          name: 'red'
+        },
+        bar2: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar'
+        },
+        id: 1
+      },
+      {
+        __typename: 'foo',
+        bar1: {
+          __typename: 'bar',
+          id: 1
+        },
+        bar2: {
+          __typename: 'bar',
+          id: 1
+        },
+        id: 2
+      }
+    ]
   });
 });

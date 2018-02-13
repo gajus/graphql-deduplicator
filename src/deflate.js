@@ -1,20 +1,26 @@
 // @flow
 
 // eslint-disable-next-line complexity
-const deflate = (node: Object, index: Object) => {
+const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
   if (node && node.id && node.__typename) {
-    if (index[node.__typename] && index[node.__typename][node.id]) {
+    const route = path.join(',');
+
+    if (index[route] && index[route][node.__typename] && index[route][node.__typename][node.id]) {
       return {
         // eslint-disable-next-line id-match
         __typename: node.__typename,
         id: node.id
       };
     } else {
-      if (!index[node.__typename]) {
-        index[node.__typename] = {};
+      if (!index[route]) {
+        index[route] = {};
       }
 
-      index[node.__typename][node.id] = true;
+      if (!index[route][node.__typename]) {
+        index[route][node.__typename] = {};
+      }
+
+      index[route][node.__typename][node.id] = true;
     }
   }
 
@@ -25,10 +31,10 @@ const deflate = (node: Object, index: Object) => {
 
     if (Array.isArray(value)) {
       node[fieldName] = value.map((childNode) => {
-        return deflate(childNode, index);
+        return deflate(childNode, index, path.concat([fieldName]));
       });
     } else if (typeof value === 'object' && value !== null) {
-      node[fieldName] = deflate(value, index);
+      node[fieldName] = deflate(value, index, path.concat([fieldName]));
     } else {
       node[fieldName] = value;
     }
@@ -40,5 +46,5 @@ const deflate = (node: Object, index: Object) => {
 export default (response: Object) => {
   const index = {};
 
-  return deflate(response, index);
+  return deflate(response, index, []);
 };
