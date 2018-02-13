@@ -58,7 +58,7 @@ test('does not modify first instance of an object; removes known entity properti
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'red'
+          name: 'bar'
         },
         bar2: {
           __typename: 'bar',
@@ -93,7 +93,7 @@ test('does not modify first instance of an object; removes known entity properti
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'red'
+          name: 'bar'
         },
         bar2: {
           __typename: 'bar',
@@ -113,6 +113,40 @@ test('does not modify first instance of an object; removes known entity properti
           id: 1
         },
         id: 2
+      }
+    ]
+  });
+});
+
+test('does not modify the input', (t) => {
+  const response = {
+    data: [
+      {
+        __typename: 'foo',
+        id: 1,
+        name: 'foo'
+      },
+      {
+        __typename: 'foo',
+        id: 1,
+        name: 'foo'
+      }
+    ]
+  };
+
+  deflate(response);
+
+  t.deepEqual(response, {
+    data: [
+      {
+        __typename: 'foo',
+        id: 1,
+        name: 'foo'
+      },
+      {
+        __typename: 'foo',
+        id: 1,
+        name: 'foo'
       }
     ]
   });

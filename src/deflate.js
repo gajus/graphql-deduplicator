@@ -26,21 +26,23 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
 
   const fieldNames = Object.keys(node);
 
+  const result = {};
+
   for (const fieldName of fieldNames) {
     const value = node[fieldName];
 
     if (Array.isArray(value)) {
-      node[fieldName] = value.map((childNode) => {
+      result[fieldName] = value.map((childNode) => {
         return deflate(childNode, index, path.concat([fieldName]));
       });
     } else if (typeof value === 'object' && value !== null) {
-      node[fieldName] = deflate(value, index, path.concat([fieldName]));
+      result[fieldName] = deflate(value, index, path.concat([fieldName]));
     } else {
-      node[fieldName] = value;
+      result[fieldName] = value;
     }
   }
 
-  return node;
+  return result;
 };
 
 export default (response: Object) => {
