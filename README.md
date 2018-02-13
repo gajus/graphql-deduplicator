@@ -171,7 +171,7 @@ import {
   graphqlExpress
 } from 'graphql-server-express';
 import {
-  createResponseDeduplicator
+  deflate
 } from 'graphql-deduplicator';
 
 const SERVICE_PORT = 3000;
@@ -182,7 +182,7 @@ app.use('/graphql', graphqlExpress(() => {
   return {
     formatResponse: (response) => {
       if (response.data && !response.data.__schema) {
-        return createResponseDeduplicator()(response);
+        return deflate(response);
       }
 
       return response;

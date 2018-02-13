@@ -4,18 +4,16 @@
 
 import invariant from 'assert';
 import test from 'ava';
-import {
-  createResponseDeduplicator
-} from '../src';
+import deflate from '../src/deflate';
 
 test('does not modify object without __typename and ID', (t) => {
   const response = {
     foo: 'bar'
   };
 
-  const normalizedResponse = createResponseDeduplicator()(response);
+  const deflatedResponse = deflate(response);
 
-  t.deepEqual(normalizedResponse, {
+  t.deepEqual(deflatedResponse, {
     foo: 'bar'
   });
 });
@@ -36,17 +34,17 @@ test('does not modify first instance of an object; removes known entity properti
     ]
   };
 
-  const normalizedResponse = createResponseDeduplicator()(response);
+  const deflatedResponse = deflate(response);
 
-  invariant(normalizedResponse.data && normalizedResponse.data.length === 2);
+  invariant(deflatedResponse.data && deflatedResponse.data.length === 2);
 
-  t.deepEqual(normalizedResponse.data[0], {
+  t.deepEqual(deflatedResponse.data[0], {
     __typename: 'foo',
     id: 1,
     name: 'foo'
   });
 
-  t.deepEqual(normalizedResponse.data[1], {
+  t.deepEqual(deflatedResponse.data[1], {
     __typename: 'foo',
     id: 1
   });

@@ -1,3 +1,3 @@
 // @flow
 
-export {default as createResponseDeduplicator} from './createResponseDeduplicator';
+export {default as deflate} from './deflate';
