@@ -16,6 +16,7 @@ Removes duplicate entities from the GraphQL response.
 * [Usage](#usage)
   * [Server-side](#server-side)
   * [Client-side](#client-side)
+* [Best practices](#best-practices)
 
 ## Client support
 
@@ -236,5 +237,38 @@ const apolloClient = new ApolloClient({
 });
 
 export default apolloClient;
+
+```
+
+# Best practices
+
+Do not break integration of the standard GraphQL clients that are unaware of the `graphql-deduplicator`.
+
+Use `deflate` only when client requests to use `graphql-deduplicator`, e.g.
+
+```js
+// Server-side
+
+app.use('/graphql', graphqlExpress((request) => {
+  return {
+    formatResponse: (response) => {
+      if (request.query.deduplicate && response.data && !response.data.__schema) {
+        return deflate(response.data);
+      }
+
+      return response;
+    }
+  };
+}));
+
+```
+
+```js
+// Client-side
+
+const httpLink = new HttpLink({
+  credentials: 'include',
+  uri: '/api?deduplicate=1'
+});
 
 ```
