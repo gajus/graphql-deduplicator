@@ -186,7 +186,7 @@ app.use('/graphql', graphqlExpress(() => {
   return {
     formatResponse: (response) => {
       if (response.data && !response.data.__schema) {
-        return deflate(response);
+        return deflate(response.data);
       }
 
       return response;
