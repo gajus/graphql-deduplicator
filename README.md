@@ -14,16 +14,18 @@ Removes duplicate entities from the GraphQL response.
 * [Motivation](#motivation)
 * [Real-life example](#real-life-example)
 * [Usage](#usage)
+  * [Server-side](#server-side)
+  * [Client-side](#client-side)
 
 ## Client support
 
 `graphql-deduplicator` has been tested with [`apollo-client`](https://github.com/apollographql/apollo-client).
 
-In theory, it should work with any GraphQL client that utilises normalization. The plan is to create a request proxy for clients that do not support normalization (see [issue #1](https://github.com/gajus/graphql-deduplicator/issues/1)).
+However, it should work with any GraphQL client that automatically appends `__typename` and `id` fields for every resource. If your client automatically does not request `__typename` and `id` fields, these fields can be specified in your GraphQL query.
 
 ## How does it work?
 
-`apollo-client` uses `__datatype` and an `id` values to construct a resource identifier. The resource identifier is used to [normalize data](http://dev.apollodata.com/core/how-it-works.html#normalize). As a result, when GraphQL API response contains a resource with a repeating identifier, the `apollo-client` is going to read only the first instance of the resource and ignore duplicate entities. `graphql-deduplicator` strips body (fields other than `__datatype` and `id`) from all the duplicate entities.
+`apollo-client` uses `__typename` and an `id` values to construct a resource identifier. The resource identifier is used to [normalize data](http://dev.apollodata.com/core/how-it-works.html#normalize). As a result, when GraphQL API response contains a resource with a repeating identifier, the `apollo-client` is going to read only the first instance of the resource and ignore duplicate entities. `graphql-deduplicator` strips body (fields other than `__datatype` and `id`) from all the duplicate entities.
 
 ## Motivation
 
@@ -66,12 +68,12 @@ Using this schema, you can query events for a particular date, e.g.
 ```graphql
 {
   events (date: "2017-05-19") {
-    __datatype
+    __typename
     id
     date
     time
     movie {
-      __datatype
+      __typename
       id
       name
       synopsis
@@ -81,7 +83,7 @@ Using this schema, you can query events for a particular date, e.g.
 
 ```
 
-> Note: If you are using `apollo-client`, then you do not need to include `__datatype` when constructing the query. `apollo-client` will do this for you.
+> Note: If you are using `apollo-client`, then you do not need to include `__typename` when constructing the query. `apollo-client` will do this for you.
 
 The result of the above query will contain a lot of duplicate information.
 
@@ -90,24 +92,24 @@ The result of the above query will contain a lot of duplicate information.
   "data": {
     "events": [
       {
-        "__datatype": "Event",
+        "__typename": "Event",
         "id": "1669971",
         "date": "2017-05-19",
         "time": "17:25",
         "movie": {
-          "__datatype": "Movie",
+          "__typename": "Movie",
           "id": "1198359",
           "name": "King Arthur: Legend of the Sword",
           "synopsis": "When the child Arthur’s father is murdered, Vortigern, Arthur’s uncle, seizes the crown. Robbed of his birthright and with no idea who he truly is, Arthur comes up the hard way in the back alleys of the city. But once he pulls the sword Excalibur from the stone, his life is turned upside down and he is forced to acknowledge his true legacy... whether he likes it or not."
         }
       },
       {
-        "__datatype": "Event",
+        "__typename": "Event",
         "id": "1669972",
         "date": "2017-05-19",
         "time": "20:30",
         "movie": {
-          "__datatype": "Movie",
+          "__typename": "Movie",
           "id": "1198359",
           "name": "King Arthur: Legend of the Sword",
           "synopsis": "When the child Arthur’s father is murdered, Vortigern, Arthur’s uncle, seizes the crown. Robbed of his birthright and with no idea who he truly is, Arthur comes up the hard way in the back alleys of the city. But once he pulls the sword Excalibur from the stone, his life is turned upside down and he is forced to acknowledge his true legacy... whether he likes it or not."
@@ -131,24 +133,24 @@ In case of the earlier example, the response becomes:
   "data": {
     "events": [
       {
-        "__datatype": "Event",
+        "__typename": "Event",
         "id": "1669971",
         "date": "2017-05-19",
         "time": "17:25",
         "movie": {
-          "__datatype": "Movie",
+          "__typename": "Movie",
           "id": "1198359",
           "name": "King Arthur: Legend of the Sword",
           "synopsis": "When the child Arthur’s father is murdered, Vortigern, Arthur’s uncle, seizes the crown. Robbed of his birthright and with no idea who he truly is, Arthur comes up the hard way in the back alleys of the city. But once he pulls the sword Excalibur from the stone, his life is turned upside down and he is forced to acknowledge his true legacy... whether he likes it or not."
         }
       },
       {
-        "__datatype": "Event",
+        "__typename": "Event",
         "id": "1669972",
         "date": "2017-05-19",
         "time": "20:30",
         "movie": {
-          "__datatype": "Movie",
+          "__typename": "Movie",
           "id": "1198359"
         }
       },
@@ -162,6 +164,8 @@ In case of the earlier example, the response becomes:
 The `synopsis` and `name` fields have been removed from the duplicate `Movie` entity.
 
 ## Usage
+
+### Server-side
 
 You need to format the final result of the query. If you are using [`graphql-server`](https://github.com/apollographql/graphql-server), configure `formatResponse`, e.g.
 
@@ -194,6 +198,43 @@ app.listen(SERVICE_PORT);
 
 ```
 
-> Note: You must create a new instance of `graphql-deduplicator` for each request.
+### Client-side
 
-Using `graphql-deduplicator` does not require any changes to the client-side code.
+You need to modify the server response before it is processed by the GraphQL client. If you are using [`apollo-client`](https://github.com/apollographql/apollo-client), use [`link`](https://www.apollographql.com/docs/react/reference/index.html#types) configuration to setup an [afterware](https://www.apollographql.com/docs/react/basics/network-layer.html#linkAfterware), e.g.
+
+```js
+// @flow
+
+import {
+  ApolloClient
+} from 'apollo-client';
+import {
+  ApolloLink,
+  concat
+} from 'apollo-link';
+import {
+  HttpLink
+} from 'apollo-link-http';
+import {
+  inflate
+} from 'graphql-deduplicator';
+
+const httpLink = new HttpLink({
+  credentials: 'include',
+  uri: '/api'
+});
+
+const inflateLink = new ApolloLink((operation, forward) => {
+  return forward(operation)
+    .map((response) => {
+      return inflate(response);
+    });
+});
+
+const apolloClient = new ApolloClient({
+  link: concat(inflateLink, httpLink)
+});
+
+export default apolloClient;
+
+```
