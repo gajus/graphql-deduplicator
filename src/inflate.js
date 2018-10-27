@@ -29,6 +29,10 @@ const inflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
 
     if (Array.isArray(value)) {
       result[fieldName] = value.map((childNode) => {
+        if (typeof childNode === 'string') {
+          return childNode;
+        }
+
         return inflate(childNode, index, path.concat([fieldName]));
       });
     } else if (typeof value === 'object' && value !== null) {
