@@ -151,3 +151,31 @@ test('does not modify the input', (t) => {
     ]
   });
 });
+
+test('does not deconstruct an array of string', (t) => {
+  const response = {
+    data: {
+      __typename: 'foo',
+      id: 1,
+      names: [
+        'foo',
+        'bar1',
+        'bar2'
+      ]
+    }
+  };
+
+  deflate(response);
+
+  t.deepEqual(response, {
+    data: {
+      __typename: 'foo',
+      id: 1,
+      names: [
+        'foo',
+        'bar1',
+        'bar2'
+      ]
+    }
+  });
+});
