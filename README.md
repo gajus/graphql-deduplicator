@@ -187,7 +187,7 @@ app.use('/graphql', graphqlExpress(() => {
   return {
     formatResponse: (response) => {
       if (response.data && !response.data.__schema) {
-        return deflate(response.data);
+        return deflate(response);
       }
 
       return response;
@@ -240,7 +240,7 @@ export default apolloClient;
 
 ```
 
-# Best practices
+## Best practices
 
 Do not break integration of the standard GraphQL clients that are unaware of the `graphql-deduplicator`.
 
@@ -271,4 +271,40 @@ const httpLink = new HttpLink({
   uri: '/api?deduplicate=1'
 });
 
+```
+
+## Example with apollo-upload-client
+
+```js
+import Vue from 'vue';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import VueApollo from 'vue-apollo';
+import { createUploadLink } from 'apollo-upload-client';
+import { ApolloLink, concat } from 'apollo-link';
+import { inflate } from 'graphql-deduplicator';
+
+Vue.use(VueApollo);
+
+const httpOptions = {
+  uri: process.env.VUE_APP_ENDPOINT,
+  credentials: 'include',
+};
+
+const inflateLink = new ApolloLink((operation, forward) => {
+  return forward(operation)
+    .map((response) => {
+      return inflate(response);
+    });
+});
+
+export const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  connectToDevTools: true,
+  link: concat(inflateLink, createUploadLink(httpOptions)),
+});
+
+export const apolloProvider = new VueApollo({
+  defaultClient: apolloClient,
+});
 ```
