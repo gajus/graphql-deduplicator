@@ -1,7 +1,5 @@
 // @flow
 
-/* eslint-disable id-match */
-
 import test from 'ava';
 import deflate from '../src/deflate';
 
