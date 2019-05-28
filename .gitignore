@@ -10,3 +10,4 @@ node_modules
 !.npmignore
 !.scripts
 !.travis.yml
+!.editorconfig
