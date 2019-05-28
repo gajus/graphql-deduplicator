@@ -16,6 +16,7 @@ Removes duplicate entities from the GraphQL response.
 * [Usage](#usage)
   * [Server-side](#server-side)
   * [Client-side](#client-side)
+    * [Example usage with `apollo-client`](example-usage-with-apollo-client)
     * [Example usage with `apollo-upload-client`](example-usage-with-apollo-upload-client)
 * [Best practices](#best-practices)
   * [Enable compression conditionally](#enable-compression-conditionally)
@@ -198,6 +199,8 @@ app.listen(3000);
 ```
 
 ### Client-side
+
+#### Example usage with `apollo-client`
 
 You need to modify the server response before it is processed by the GraphQL client. If you are using [`apollo-client`](https://github.com/apollographql/apollo-client), use [`link`](https://www.apollographql.com/docs/react/reference/index.html#types) configuration to setup an [afterware](https://www.apollographql.com/docs/react/basics/network-layer.html#linkAfterware), e.g.
 
