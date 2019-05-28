@@ -16,21 +16,23 @@ Removes duplicate entities from the GraphQL response.
 * [Usage](#usage)
   * [Server-side](#server-side)
   * [Client-side](#client-side)
+    * [Example usage with `apollo-upload-client`](example-usage-with-apollo-upload-client)
 * [Best practices](#best-practices)
+  * [Enable compression conditionally](#enable-compression-conditionally)
 
 ## Client support
 
-`graphql-deduplicator` has been tested with [`apollo-client`](https://github.com/apollographql/apollo-client).
+`graphql-deduplicator` works with any GraphQL client that appends `__typename` and `id` fields to every resource. If your client automatically does not request `__typename` and `id` fields, these fields can be specified in your GraphQL query.
 
-However, it should work with any GraphQL client that automatically appends `__typename` and `id` fields for every resource. If your client automatically does not request `__typename` and `id` fields, these fields can be specified in your GraphQL query.
+`graphql-deduplicator` has been tested with [`apollo-client`](https://github.com/apollographql/apollo-client).
 
 ## How does it work?
 
-`apollo-client` uses `__typename` and an `id` values to construct a resource identifier. The resource identifier is used to [normalize data](http://dev.apollodata.com/core/how-it-works.html#normalize). As a result, when GraphQL API response contains a resource with a repeating identifier, the `apollo-client` is going to read only the first instance of the resource and ignore duplicate entities. `graphql-deduplicator` strips body (fields other than `__datatype` and `id`) from all the duplicate entities.
+`__typename` and an `id` values are used to construct a resource identifier. The resource identifier is used to [normalize data](http://dev.apollodata.com/core/how-it-works.html#normalize). As a result, when GraphQL API response contains a resource with a repeating identifier, the `apollo-client` is going to read only the first instance of the resource and ignore duplicate entities. `graphql-deduplicator` strips body (fields other than `__datatype` and `id`) from all the duplicate entities.
 
 ## Motivation
 
-`graphql-deduplicator` is designed to reduce the GraphQL response size by removing body of duplicate entities. This allows to make queries that return large result sets of repeated data without worrying about the cost of the response body size, time it takes to parse the response or the memory the reconstructed object will consume.
+`graphql-deduplicator` is designed to reduce the GraphQL response size by removing body of duplicate entities. This allows to make queries that return large datasets of repeated data without worrying about the cost of the response body size, time it takes to parse the response or the memory the reconstructed object will consume.
 
 ## Real-life example
 
@@ -50,9 +52,7 @@ type Movie implements Node {
 type Event implements Node {
   id: ID!
   movie: Movie!
-  # YYYY-MM-DD
   date: String!
-  # HH:mm
   time: String!
 }
 
@@ -84,7 +84,7 @@ Using this schema, you can query events for a particular date, e.g.
 
 ```
 
-> Note: If you are using `apollo-client`, then you do not need to include `__typename` when constructing the query. `apollo-client` will do this for you.
+Note: If you are using `apollo-client`, then you do not need to include `__typename` when constructing the query.
 
 The result of the above query will contain a lot of duplicate information.
 
@@ -123,7 +123,7 @@ The result of the above query will contain a lot of duplicate information.
 
 ```
 
-I've run into this situation when building https://gotocinema.com. A query retrieving 300 events (movie screening event) produced a response of 1.5MB. When gziped, that number dropped to 100KB. However, the problem is that upon receiving the response, the browser needs to parse the entire JSON document. Parsing 1.5MB JSON string is (a) time consuming and (b) memory expensive.
+I've run into this situation when building https://applaudience.co.uk. A query retrieving 300 events produced a response of 1.5MB. When gziped, that number dropped to 100KB. However, the problem is that upon receiving the response, the browser needs to parse the entire JSON document. Parsing 1.5MB JSON string is (a) time consuming and (b) memory expensive.
 
 The good news is that we do not need to return body of duplicate records (see [How does it work?](#how-does-it-work)). For all duplicate records we only need to return `__typename` and `id`. This information is enough for `apollo-client` to identify the resource as duplicate and skip it. In case when a response includes large and often repeated fragments, this will reduce the response size 10x, 100x or more times.
 
@@ -179,8 +179,6 @@ import {
   deflate
 } from 'graphql-deduplicator';
 
-const SERVICE_PORT = 3000;
-
 const app = express();
 
 app.use('/graphql', graphqlExpress(() => {
@@ -195,7 +193,7 @@ app.use('/graphql', graphqlExpress(() => {
   };
 }));
 
-app.listen(SERVICE_PORT);
+app.listen(3000);
 
 ```
 
@@ -240,7 +238,57 @@ export default apolloClient;
 
 ```
 
+#### Example usage with `apollo-upload-client`
+
+```js
+import Vue from 'vue';
+import {
+  ApolloClient
+} from 'apollo-client';
+import {
+  InMemoryCache
+} from 'apollo-cache-inmemory';
+import VueApollo from 'vue-apollo';
+import {
+  createUploadLink
+} from 'apollo-upload-client';
+import {
+  ApolloLink,
+  concat
+} from 'apollo-link';
+import {
+  inflate
+} from 'graphql-deduplicator';
+
+Vue.use(VueApollo);
+
+const httpOptions = {
+  uri: process.env.VUE_APP_ENDPOINT,
+  credentials: 'include',
+};
+
+const inflateLink = new ApolloLink((operation, forward) => {
+  return forward(operation)
+    .map((response) => {
+      return inflate(response);
+    });
+});
+
+export const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  connectToDevTools: true,
+  link: concat(inflateLink, createUploadLink(httpOptions)),
+});
+
+export const apolloProvider = new VueApollo({
+  defaultClient: apolloClient,
+});
+
+```
+
 ## Best practices
+
+### Enable compression conditionally
 
 Do not break integration of the standard GraphQL clients that are unaware of the `graphql-deduplicator`.
 
@@ -271,40 +319,4 @@ const httpLink = new HttpLink({
   uri: '/api?deduplicate=1'
 });
 
-```
-
-## Example with apollo-upload-client
-
-```js
-import Vue from 'vue';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import VueApollo from 'vue-apollo';
-import { createUploadLink } from 'apollo-upload-client';
-import { ApolloLink, concat } from 'apollo-link';
-import { inflate } from 'graphql-deduplicator';
-
-Vue.use(VueApollo);
-
-const httpOptions = {
-  uri: process.env.VUE_APP_ENDPOINT,
-  credentials: 'include',
-};
-
-const inflateLink = new ApolloLink((operation, forward) => {
-  return forward(operation)
-    .map((response) => {
-      return inflate(response);
-    });
-});
-
-export const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
-  connectToDevTools: true,
-  link: concat(inflateLink, createUploadLink(httpOptions)),
-});
-
-export const apolloProvider = new VueApollo({
-  defaultClient: apolloClient,
-});
 ```
