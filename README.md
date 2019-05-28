@@ -18,7 +18,6 @@ Removes duplicate entities from the GraphQL response.
   * [Client-side](#client-side)
     * [Example usage with `apollo-client`](example-usage-with-apollo-client)
     * [Example usage with `apollo-boost`](example-usage-with-apollo-boost)
-    * [Example usage with `apollo-upload-client`](example-usage-with-apollo-upload-client)
 * [Best practices](#best-practices)
   * [Enable compression conditionally](#enable-compression-conditionally)
 
@@ -216,6 +215,9 @@ import {
   concat
 } from 'apollo-link';
 import {
+  InMemoryCache
+} from 'apollo-cache-inmemory';
+import {
   HttpLink
 } from 'apollo-link-http';
 import {
@@ -235,6 +237,7 @@ const inflateLink = new ApolloLink((operation, forward) => {
 });
 
 const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
   link: concat(inflateLink, httpLink)
 });
 
@@ -247,54 +250,6 @@ export default apolloClient;
 It is not possible to configure link with `apollo-boost`. Therefore, it is not possible to use `graphql-deduplicator` with `apollo-boost`. Use `apollo-client` setup.
 
 Note: `apollo-boost` will be [discontinued starting Apollo Client v3](https://github.com/apollographql/apollo-client/issues/3225#issuecomment-415858054).
-
-#### Example usage with `apollo-upload-client`
-
-```js
-import Vue from 'vue';
-import {
-  ApolloClient
-} from 'apollo-client';
-import {
-  InMemoryCache
-} from 'apollo-cache-inmemory';
-import VueApollo from 'vue-apollo';
-import {
-  createUploadLink
-} from 'apollo-upload-client';
-import {
-  ApolloLink,
-  concat
-} from 'apollo-link';
-import {
-  inflate
-} from 'graphql-deduplicator';
-
-Vue.use(VueApollo);
-
-const httpOptions = {
-  uri: process.env.VUE_APP_ENDPOINT,
-  credentials: 'include',
-};
-
-const inflateLink = new ApolloLink((operation, forward) => {
-  return forward(operation)
-    .map((response) => {
-      return inflate(response);
-    });
-});
-
-export const apolloClient = new ApolloClient({
-  cache: new InMemoryCache(),
-  connectToDevTools: true,
-  link: concat(inflateLink, createUploadLink(httpOptions)),
-});
-
-export const apolloProvider = new VueApollo({
-  defaultClient: apolloClient,
-});
-
-```
 
 ## Best practices
 
