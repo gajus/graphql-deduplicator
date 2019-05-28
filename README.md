@@ -17,6 +17,7 @@ Removes duplicate entities from the GraphQL response.
   * [Server-side](#server-side)
   * [Client-side](#client-side)
     * [Example usage with `apollo-client`](example-usage-with-apollo-client)
+    * [Example usage with `apollo-boost`](example-usage-with-apollo-boost)
     * [Example usage with `apollo-upload-client`](example-usage-with-apollo-upload-client)
 * [Best practices](#best-practices)
   * [Enable compression conditionally](#enable-compression-conditionally)
