@@ -241,6 +241,12 @@ export default apolloClient;
 
 ```
 
+#### Example usage with `apollo-boost`
+
+It is not possible to configure link with `apollo-boost`. Therefore, it is not possible to use `graphql-deduplicator` with `apollo-boost`. Use `apollo-client` setup.
+
+Note: `apollo-boost` will be [discontinued starting Apollo Client v3](https://github.com/apollographql/apollo-client/issues/3225#issuecomment-415858054).
+
 #### Example usage with `apollo-upload-client`
 
 ```js
