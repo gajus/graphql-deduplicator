@@ -253,7 +253,7 @@ app.use('/graphql', graphqlExpress((request) => {
   return {
     formatResponse: (response) => {
       if (request.query.deduplicate && response.data && !response.data.__schema) {
-        return deflate(response.data);
+        return deflate(response);
       }
 
       return response;
