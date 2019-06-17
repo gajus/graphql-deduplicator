@@ -1,15 +1,15 @@
 // @flow
 
 // eslint-disable-next-line complexity
-const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
-  if (node && node.id && node.__typename) {
+const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>, key: string) => {
+  if (node && node[key] && node.__typename) {
     const route = path.join(',');
 
-    if (index[route] && index[route][node.__typename] && index[route][node.__typename][node.id]) {
+    if (index[route] && index[route][node.__typename] && index[route][node.__typename][node[key]]) {
       return {
         // eslint-disable-next-line id-match
         __typename: node.__typename,
-        id: node.id
+        [key]: node[key]
       };
     } else {
       if (!index[route]) {
@@ -20,7 +20,7 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
         index[route][node.__typename] = {};
       }
 
-      index[route][node.__typename][node.id] = true;
+      index[route][node.__typename][node[key]] = true;
     }
   }
 
@@ -37,10 +37,10 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
           return childNode;
         }
 
-        return deflate(childNode, index, path.concat([fieldName]));
+        return deflate(childNode, index, path.concat([fieldName]), key);
       });
     } else if (typeof value === 'object' && value !== null) {
-      result[fieldName] = deflate(value, index, path.concat([fieldName]));
+      result[fieldName] = deflate(value, index, path.concat([fieldName]), key);
     } else {
       result[fieldName] = value;
     }
@@ -49,8 +49,8 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
   return result;
 };
 
-export default (response: Object) => {
+export default (response: Object, key: string = 'id') => {
   const index = {};
 
-  return deflate(response, index, []);
+  return deflate(response, index, [], key);
 };
