@@ -1,5 +1,6 @@
 # graphql-deduplicator
 
+[![GitSpo Mentions](https://gitspo.com/badges/mentions/gajus/graphql-deduplicator?style=flat-square)](https://gitspo.com/mentions/gajus/graphql-deduplicator)
 [![Travis build status](http://img.shields.io/travis/gajus/graphql-deduplicator/master.svg?style=flat-square)](https://travis-ci.org/gajus/graphql-deduplicator)
 [![Coveralls](https://img.shields.io/coveralls/gajus/graphql-deduplicator.svg?style=flat-square)](https://github.com/gajus/graphql-deduplicator)
 [![NPM version](http://img.shields.io/npm/v/graphql-deduplicator.svg?style=flat-square)](https://www.npmjs.org/package/graphql-deduplicator)
