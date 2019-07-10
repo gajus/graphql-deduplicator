@@ -163,9 +163,9 @@ test('does not deconstruct an array of string', (t) => {
     }
   };
 
-  deflate(response);
+  const deflatedResponse = deflate(response);
 
-  t.deepEqual(response, {
+  t.deepEqual(deflatedResponse, {
     data: {
       __typename: 'foo',
       id: 1,
