@@ -1,12 +1,6 @@
 // @flow
 
-const isPlainObject = (object: Object) => {
-  if (typeof object === 'object' && object !== null) {
-    return Object.prototype.toString.call(object) === '[object Object]';
-  }
-
-  return false;
-};
+import isPlainObject from './isPlainObject';
 
 // eslint-disable-next-line complexity
 const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {

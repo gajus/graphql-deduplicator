@@ -192,4 +192,3 @@ test('regression: does not change object types', (t) => {
   t.true(deflatedResponse.http.headers instanceof Map);
   t.deepEqual(deflatedResponse.http.headers.get('foo'), 'bar');
 });
-
