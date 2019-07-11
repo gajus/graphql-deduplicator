@@ -1,6 +1,6 @@
 // @flow
 
-import isPlainObject from './isPlainObject';
+import isPlainObject from 'is-plain-object';
 
 // eslint-disable-next-line complexity
 const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
