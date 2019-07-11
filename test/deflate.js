@@ -177,3 +177,18 @@ test('does not deconstruct an array of string', (t) => {
     }
   });
 });
+
+// https://github.com/gajus/graphql-deduplicator/issues/13
+test('regression: does not change object types', (t) => {
+  const http = {
+    headers: new Map([['foo', 'bar']])
+  };
+  const response = {
+    http
+  };
+
+  const deflatedResponse: any = deflate(response);
+
+  t.true(deflatedResponse.http.headers instanceof Map);
+  t.deepEqual(deflatedResponse.http.headers.get('foo'), 'bar');
+});
