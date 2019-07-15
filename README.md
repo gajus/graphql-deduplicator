@@ -10,17 +10,19 @@ A GraphQL response deduplicator.
 
 Removes duplicate entities from the GraphQL response.
 
-* [Client support](#client-support)
-* [How does it work?](#how-does-it-work)
-* [Motivation](#motivation)
-* [Real-life example](#real-life-example)
-* [Usage](#usage)
-  * [Server-side](#server-side)
-  * [Client-side](#client-side)
-    * [Example usage with `apollo-client`](#example-usage-with-apollo-client)
-    * [Example usage with `apollo-boost`](#example-usage-with-apollo-boost)
-* [Best practices](#best-practices)
-  * [Enable compression conditionally](#enable-compression-conditionally)
+- [graphql-deduplicator](#graphql-deduplicator)
+  - [Client support](#Client-support)
+  - [How does it work?](#How-does-it-work)
+  - [Motivation](#Motivation)
+  - [Real-life example](#Real-life-example)
+  - [Usage](#Usage)
+    - [Server-side](#Server-side)
+    - [Client-side](#Client-side)
+      - [Example usage with `apollo-client`](#Example-usage-with-apollo-client)
+      - [Example usage with `apollo-boost`](#Example-usage-with-apollo-boost)
+  - [Best practices](#Best-practices)
+    - [Enable compression conditionally](#Enable-compression-conditionally)
+      - [Example using with Apollo Server](#Example-using-with-Apollo-Server)
 
 ## Client support
 
@@ -285,4 +287,40 @@ const httpLink = new HttpLink({
   uri: '/api?deduplicate=1'
 });
 
+```
+
+#### Example using with [Apollo Server](https://github.com/apollographql/apollo-server)
+
+```javascript
+import { GraphQLExtension, GraphQLResponse } from 'apollo-server-core'
+import { deflate } from 'graphql-deduplicator'
+// [..]
+
+const createContext = ({ req }): => {
+  return {
+    req,
+    // [..]
+  }
+}
+class DeduplicateResponseExtension extends GraphQLExtension {
+  public willSendResponse(o) {
+    const { context, graphqlResponse } = o
+    // Ensures `?deduplicate=1` is used in the request
+    if (context.req.query.deduplicate && graphqlResponse.data && !graphqlResponse.data.__schema) {
+      const newResponse = deflate(graphqlResponse)
+      return {
+        ...o,
+        graphqlResponse: newResponse,
+      }
+    }
+
+    return o
+  }
+}
+
+const apolloServer = new ApolloServer({
+  // [..]
+  context: createContext,
+  extensions: [() => new DeduplicateResponseExtension()],
+})
 ```
