@@ -1,7 +1,5 @@
 // @flow
 
-import isPlainObject from 'is-plain-object';
-
 // eslint-disable-next-line complexity
 const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
   if (node && node.id && node.__typename) {
@@ -24,10 +22,6 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
 
       index[route][node.__typename][node.id] = true;
     }
-  }
-
-  if (!isPlainObject(node)) {
-    return node;
   }
 
   const fieldNames = Object.keys(node);

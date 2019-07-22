@@ -307,10 +307,13 @@ class DeduplicateResponseExtension extends GraphQLExtension {
     const { context, graphqlResponse } = o
     // Ensures `?deduplicate=1` is used in the request
     if (context.req.query.deduplicate && graphqlResponse.data && !graphqlResponse.data.__schema) {
-      const newResponse = deflate(graphqlResponse)
+      const data = deflate(graphqlResponse.data)
       return {
         ...o,
-        graphqlResponse: newResponse,
+        graphqlResponse: {
+          ...graphqlResponse,
+          data,
+        },
       }
     }
 
