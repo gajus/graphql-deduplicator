@@ -71,7 +71,5 @@
     "test": "NODE_ENV=test nyc --reporter=text ava --verbose --serial"
   },
   "version": "1.0.0",
-  "dependencies": {
-    "is-plain-object": "^3.0.0"
-  }
+  "dependencies": {}
 }
