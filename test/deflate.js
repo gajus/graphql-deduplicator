@@ -177,3 +177,33 @@ test('does not deconstruct an array of string', (t) => {
     }
   });
 });
+
+test('does not deconstruct a nested array', (t) => {
+  const response = {
+    data: {
+      __typename: 'foo',
+      names: [
+        [
+          'foo',
+          'bar1',
+          'bar2'
+        ]
+      ]
+    }
+  };
+
+  const deflatedResponse = deflate(response);
+
+  t.deepEqual(deflatedResponse, {
+    data: {
+      __typename: 'foo',
+      names: [
+        [
+          'foo',
+          'bar1',
+          'bar2'
+        ]
+      ]
+    }
+  });
+});
