@@ -9,7 +9,7 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
       return {
         // eslint-disable-next-line id-match
         __typename: node.__typename,
-        id: node.id
+        id: node.id,
       };
     } else {
       if (!index[route]) {
@@ -32,16 +32,19 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
     const value = node[fieldName];
 
     if (Array.isArray(value)) {
+      // $FlowFixMe
       result[fieldName] = value.map((childNode) => {
-        if (typeof childNode === 'string') {
+        if (typeof childNode === 'string' || typeof childNode === 'number' || typeof childNode === 'boolean') {
           return childNode;
         }
 
         return deflate(childNode, index, path.concat([fieldName]));
       });
     } else if (typeof value === 'object' && value !== null) {
+      // $FlowFixMe
       result[fieldName] = deflate(value, index, path.concat([fieldName]));
     } else {
+      // $FlowFixMe
       result[fieldName] = value;
     }
   }
