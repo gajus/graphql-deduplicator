@@ -9,13 +9,13 @@ test('inflates a deflated object', (t) => {
       {
         __typename: 'foo',
         id: 1,
-        name: 'bar'
+        name: 'bar',
       },
       {
         __typename: 'foo',
-        id: 1
-      }
-    ]
+        id: 1,
+      },
+    ],
   };
 
   const inflatedResponse = inflate(deflatedResponse);
@@ -25,14 +25,14 @@ test('inflates a deflated object', (t) => {
       {
         __typename: 'foo',
         id: 1,
-        name: 'bar'
+        name: 'bar',
       },
       {
         __typename: 'foo',
         id: 1,
-        name: 'bar'
-      }
-    ]
+        name: 'bar',
+      },
+    ],
   });
 });
 
@@ -44,28 +44,28 @@ test('inflates a deflated object (nested; different path)', (t) => {
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar1'
+          name: 'bar1',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar2'
+          name: 'bar2',
         },
-        id: 1
+        id: 1,
       },
       {
         __typename: 'foo',
         bar1: {
           __typename: 'bar',
-          id: 1
+          id: 1,
         },
         bar2: {
           __typename: 'bar',
-          id: 1
+          id: 1,
         },
-        id: 2
-      }
-    ]
+        id: 2,
+      },
+    ],
   };
 
   const inflatedResponse = inflate(deflatedResponse);
@@ -77,30 +77,30 @@ test('inflates a deflated object (nested; different path)', (t) => {
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar1'
+          name: 'bar1',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar2'
+          name: 'bar2',
         },
-        id: 1
+        id: 1,
       },
       {
         __typename: 'foo',
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar1'
+          name: 'bar1',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar2'
+          name: 'bar2',
         },
-        id: 2
-      }
-    ]
+        id: 2,
+      },
+    ],
   });
 });
 
@@ -112,9 +112,9 @@ test('does not deconstruct an array of string', (t) => {
       names: [
         'foo',
         'bar1',
-        'bar2'
-      ]
-    }
+        'bar2',
+      ],
+    },
   };
 
   const inflatedResponse = inflate(deflatedResponse);
@@ -126,9 +126,9 @@ test('does not deconstruct an array of string', (t) => {
       names: [
         'foo',
         'bar1',
-        'bar2'
-      ]
-    }
+        'bar2',
+      ],
+    },
   });
 });
 
@@ -141,8 +141,8 @@ test('does not deconstruct an array of numbers', (t) => {
         1,
         2,
         3,
-      ]
-    }
+      ],
+    },
   };
 
   const inflatedResponse = inflate(deflatedResponse);
@@ -154,24 +154,23 @@ test('does not deconstruct an array of numbers', (t) => {
       numbers: [
         1,
         2,
-        3
-      ]
-    }
+        3,
+      ],
+    },
   });
 });
-
 
 test('does not deconstruct an array of booleans', (t) => {
   const response = {
     data: {
       __typename: 'foo',
-      id: 1,
       bools: [
         true,
         false,
-        false
-      ]
-    }
+        false,
+      ],
+      id: 1,
+    },
   };
 
   const deflatedResponse = inflate(response);
@@ -179,13 +178,13 @@ test('does not deconstruct an array of booleans', (t) => {
   t.deepEqual(deflatedResponse, {
     data: {
       __typename: 'foo',
-      id: 1,
       bools: [
         true,
         false,
-        false
-      ]
-    }
+        false,
+      ],
+      id: 1,
+    },
   });
 });
 
@@ -197,10 +196,10 @@ test('does not deconstruct a nested array', (t) => {
         [
           'foo',
           'bar1',
-          'bar2'
-        ]
-      ]
-    }
+          'bar2',
+        ],
+      ],
+    },
   };
 
   const inflatedResponse = inflate(response);
@@ -212,9 +211,9 @@ test('does not deconstruct a nested array', (t) => {
         [
           'foo',
           'bar1',
-          'bar2'
-        ]
-      ]
-    }
+          'bar2',
+        ],
+      ],
+    },
   });
 });

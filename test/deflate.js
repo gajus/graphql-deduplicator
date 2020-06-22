@@ -5,13 +5,13 @@ import deflate from '../src/deflate';
 
 test('does not modify object without __typename and ID', (t) => {
   const response = {
-    foo: 'bar'
+    foo: 'bar',
   };
 
   const deflatedResponse = deflate(response);
 
   t.deepEqual(deflatedResponse, {
-    foo: 'bar'
+    foo: 'bar',
   });
 });
 
@@ -21,14 +21,14 @@ test('does not modify first instance of an object; removes known entity properti
       {
         __typename: 'foo',
         id: 1,
-        name: 'foo'
+        name: 'foo',
       },
       {
         __typename: 'foo',
         id: 1,
-        name: 'foo'
-      }
-    ]
+        name: 'foo',
+      },
+    ],
   };
 
   const deflatedResponse = deflate(response);
@@ -38,13 +38,13 @@ test('does not modify first instance of an object; removes known entity properti
       {
         __typename: 'foo',
         id: 1,
-        name: 'foo'
+        name: 'foo',
       },
       {
         __typename: 'foo',
-        id: 1
-      }
-    ]
+        id: 1,
+      },
+    ],
   });
 });
 
@@ -56,30 +56,30 @@ test('does not modify first instance of an object; removes known entity properti
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
-        id: 1
+        id: 1,
       },
       {
         __typename: 'foo',
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
-        id: 2
-      }
-    ]
+        id: 2,
+      },
+    ],
   };
 
   const deflatedResponse = deflate(response);
@@ -91,28 +91,28 @@ test('does not modify first instance of an object; removes known entity properti
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
-        id: 1
+        id: 1,
       },
       {
         __typename: 'foo',
         bar1: {
           __typename: 'bar',
-          id: 1
+          id: 1,
         },
         bar2: {
           __typename: 'bar',
-          id: 1
+          id: 1,
         },
-        id: 2
-      }
-    ]
+        id: 2,
+      },
+    ],
   });
 });
 
@@ -122,14 +122,14 @@ test('does not modify the input', (t) => {
       {
         __typename: 'foo',
         id: 1,
-        name: 'foo'
+        name: 'foo',
       },
       {
         __typename: 'foo',
         id: 1,
-        name: 'foo'
-      }
-    ]
+        name: 'foo',
+      },
+    ],
   };
 
   deflate(response);
@@ -139,14 +139,14 @@ test('does not modify the input', (t) => {
       {
         __typename: 'foo',
         id: 1,
-        name: 'foo'
+        name: 'foo',
       },
       {
         __typename: 'foo',
         id: 1,
-        name: 'foo'
-      }
-    ]
+        name: 'foo',
+      },
+    ],
   });
 });
 
@@ -158,9 +158,9 @@ test('does not deconstruct an array of string', (t) => {
       names: [
         'foo',
         'bar1',
-        'bar2'
-      ]
-    }
+        'bar2',
+      ],
+    },
   };
 
   const deflatedResponse = deflate(response);
@@ -172,9 +172,9 @@ test('does not deconstruct an array of string', (t) => {
       names: [
         'foo',
         'bar1',
-        'bar2'
-      ]
-    }
+        'bar2',
+      ],
+    },
   });
 });
 
@@ -186,9 +186,9 @@ test('does not deconstruct an array of numbers', (t) => {
       numbers: [
         1,
         2,
-        3
-      ]
-    }
+        3,
+      ],
+    },
   };
 
   const deflatedResponse = deflate(response);
@@ -200,9 +200,9 @@ test('does not deconstruct an array of numbers', (t) => {
       numbers: [
         1,
         2,
-        3
-      ]
-    }
+        3,
+      ],
+    },
   });
 });
 
@@ -210,13 +210,13 @@ test('does not deconstruct an array of booleans', (t) => {
   const response = {
     data: {
       __typename: 'foo',
-      id: 1,
       bools: [
         true,
         false,
-        false
-      ]
-    }
+        false,
+      ],
+      id: 1,
+    },
   };
 
   const deflatedResponse = deflate(response);
@@ -224,16 +224,15 @@ test('does not deconstruct an array of booleans', (t) => {
   t.deepEqual(deflatedResponse, {
     data: {
       __typename: 'foo',
-      id: 1,
       bools: [
         true,
         false,
-        false
-      ]
-    }
+        false,
+      ],
+      id: 1,
+    },
   });
 });
-
 
 test('does not deconstruct a nested array', (t) => {
   const response = {
@@ -243,10 +242,10 @@ test('does not deconstruct a nested array', (t) => {
         [
           'foo',
           'bar1',
-          'bar2'
-        ]
-      ]
-    }
+          'bar2',
+        ],
+      ],
+    },
   };
 
   const deflatedResponse = deflate(response);
@@ -258,9 +257,9 @@ test('does not deconstruct a nested array', (t) => {
         [
           'foo',
           'bar1',
-          'bar2'
-        ]
-      ]
-    }
+          'bar2',
+        ],
+      ],
+    },
   });
 });

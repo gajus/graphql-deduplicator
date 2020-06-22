@@ -12,30 +12,30 @@ test('deflate() followed by inflate() returns an identical object', (t) => {
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
-        id: 1
+        id: 1,
       },
       {
         __typename: 'foo',
         bar1: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
         bar2: {
           __typename: 'bar',
           id: 1,
-          name: 'bar'
+          name: 'bar',
         },
-        id: 2
-      }
-    ]
+        id: 2,
+      },
+    ],
   };
 
   const deflatedResponse = deflate(response);
