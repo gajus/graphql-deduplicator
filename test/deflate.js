@@ -178,6 +178,63 @@ test('does not deconstruct an array of string', (t) => {
   });
 });
 
+test('does not deconstruct an array of numbers', (t) => {
+  const response = {
+    data: {
+      __typename: 'foo',
+      id: 1,
+      numbers: [
+        1,
+        2,
+        3
+      ]
+    }
+  };
+
+  const deflatedResponse = deflate(response);
+
+  t.deepEqual(deflatedResponse, {
+    data: {
+      __typename: 'foo',
+      id: 1,
+      numbers: [
+        1,
+        2,
+        3
+      ]
+    }
+  });
+});
+
+test('does not deconstruct an array of booleans', (t) => {
+  const response = {
+    data: {
+      __typename: 'foo',
+      id: 1,
+      bools: [
+        true,
+        false,
+        false
+      ]
+    }
+  };
+
+  const deflatedResponse = deflate(response);
+
+  t.deepEqual(deflatedResponse, {
+    data: {
+      __typename: 'foo',
+      id: 1,
+      bools: [
+        true,
+        false,
+        false
+      ]
+    }
+  });
+});
+
+
 test('does not deconstruct a nested array', (t) => {
   const response = {
     data: {

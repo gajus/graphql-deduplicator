@@ -33,7 +33,7 @@ const deflate = (node: Object, index: Object, path: $ReadOnlyArray<string>) => {
 
     if (Array.isArray(value)) {
       result[fieldName] = value.map((childNode) => {
-        if (typeof childNode === 'string') {
+        if (typeof childNode === 'string' || typeof childNode === 'number' || typeof childNode === 'boolean') {
           return childNode;
         }
 
