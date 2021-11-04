@@ -108,7 +108,7 @@ test('inflates a deflated object (with deflated nested object)', (t) => {
   const deflatedResponse = {
     data: [
       {
-        __typename: 'foo1',
+        __typename: 'foo',
         bar: {
           __typename: 'bar',
           id: 1,
@@ -117,7 +117,7 @@ test('inflates a deflated object (with deflated nested object)', (t) => {
         id: 1,
       },
       {
-        __typename: 'foo2',
+        __typename: 'foo',
         bar: {
           __typename: 'bar',
           id: 1,
@@ -125,7 +125,7 @@ test('inflates a deflated object (with deflated nested object)', (t) => {
         id: 2,
       },
       {
-        __typename: 'foo2',
+        __typename: 'foo',
         bar: {
           __typename: 'bar',
           id: 1,
@@ -140,7 +140,7 @@ test('inflates a deflated object (with deflated nested object)', (t) => {
   t.deepEqual(inflatedResponse, {
     data: [
       {
-        __typename: 'foo1',
+        __typename: 'foo',
         bar: {
           __typename: 'bar',
           id: 1,
@@ -149,7 +149,7 @@ test('inflates a deflated object (with deflated nested object)', (t) => {
         id: 1,
       },
       {
-        __typename: 'foo2',
+        __typename: 'foo',
         bar: {
           __typename: 'bar',
           id: 1,
@@ -158,7 +158,7 @@ test('inflates a deflated object (with deflated nested object)', (t) => {
         id: 2,
       },
       {
-        __typename: 'foo2',
+        __typename: 'foo',
         bar: {
           __typename: 'bar',
           id: 1,
