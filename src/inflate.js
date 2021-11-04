@@ -13,22 +13,11 @@ const inflate = (node: NodeType, index: Object, path: $ReadOnlyArray<string>): N
       }
     });
   } else {
+    const route = path.join(',');
     if (node && node.id && node.__typename) {
-      const route = path.join(',');
-
       if (index[route] && index[route][node.__typename] && index[route][node.__typename][node.id]) {
         return index[route][node.__typename][node.id];
       }
-
-      if (!index[route]) {
-        index[route] = {};
-      }
-
-      if (!index[route][node.__typename]) {
-        index[route][node.__typename] = {};
-      }
-
-      index[route][node.__typename][node.id] = node;
     }
     const fieldNames = Object.keys(node);
     const result = {};
@@ -40,6 +29,18 @@ const inflate = (node: NodeType, index: Object, path: $ReadOnlyArray<string>): N
       } else {
         result[fieldName] = value;
       }
+    }
+
+    if (node && node.id && node.__typename) {
+      if (!index[route]) {
+        index[route] = {};
+      }
+
+      if (!index[route][node.__typename]) {
+        index[route][node.__typename] = {};
+      }
+
+      index[route][node.__typename][node.id] = result;
     }
 
     return result;

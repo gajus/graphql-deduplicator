@@ -104,6 +104,72 @@ test('inflates a deflated object (nested; different path)', (t) => {
   });
 });
 
+test('inflates a deflated object (with deflated nested object)', (t) => {
+  const deflatedResponse = {
+    data: [
+      {
+        __typename: 'foo',
+        bar: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar',
+        },
+        id: 1,
+      },
+      {
+        __typename: 'foo',
+        bar: {
+          __typename: 'bar',
+          id: 1,
+        },
+        id: 2,
+      },
+      {
+        __typename: 'foo',
+        bar: {
+          __typename: 'bar',
+          id: 1,
+        },
+        id: 2,
+      },
+    ],
+  };
+
+  const inflatedResponse = inflate(deflatedResponse);
+
+  t.deepEqual(inflatedResponse, {
+    data: [
+      {
+        __typename: 'foo',
+        bar: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar',
+        },
+        id: 1,
+      },
+      {
+        __typename: 'foo',
+        bar: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar',
+        },
+        id: 2,
+      },
+      {
+        __typename: 'foo',
+        bar: {
+          __typename: 'bar',
+          id: 1,
+          name: 'bar',
+        },
+        id: 2,
+      },
+    ],
+  });
+});
+
 test('does not deconstruct an array of string', (t) => {
   const deflatedResponse = {
     data: {
