@@ -263,3 +263,65 @@ test('does not deconstruct a nested array', (t) => {
     },
   });
 });
+
+test('does not modify null values', (t) => {
+  const response = {
+    data: null,
+  };
+
+  const deflatedResponse = deflate(response);
+
+  t.deepEqual(deflatedResponse, {
+    data: null,
+  });
+});
+
+test('does not modify objects with null fields', (t) => {
+  const response = {
+    bar: null,
+    foo: {
+      __typename: 'foo',
+      id: 1,
+      name: 'bar',
+    },
+  };
+
+  const deflatedResponse = deflate(response);
+
+  t.deepEqual(deflatedResponse, {
+    bar: null,
+    foo: {
+      __typename: 'foo',
+      id: 1,
+      name: 'bar',
+    },
+  });
+});
+
+test('does not deconstruct an array with null elements', (t) => {
+  const response = {
+    data: [
+      {
+        __typename: 'foo',
+        id: 1,
+        items: [
+          null,
+        ],
+      },
+    ],
+  };
+
+  const deflatedResponse = deflate(response);
+
+  t.deepEqual(deflatedResponse, {
+    data: [
+      {
+        __typename: 'foo',
+        id: 1,
+        items: [
+          null,
+        ],
+      },
+    ],
+  });
+});
