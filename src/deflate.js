@@ -13,6 +13,11 @@ const deflate = (node: NodeType, index: Object, path: $ReadOnlyArray<string>): N
       }
     });
   } else {
+    // Handle null and undefined by preserving them
+    if (node === null || node === undefined) {
+      return node;
+    }
+
     if (node && node.id && node.__typename) {
       const route = path.join(',');
 
